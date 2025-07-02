@@ -2,34 +2,31 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Location-based AR with AR.js</title>
+    <title>Location-based AR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    
+    <!-- เรียกใช้ A-Frame และ AR.js -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://unpkg.com/ar.js@3.3.2/aframe/build/aframe-ar-nft.min.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
 
     <a-scene
-      vr-mode-ui="enabled: false"
       embedded
-      arjs="sourceType: webcam; gpsMinAccuracy: 100; gpsTimeInterval: 1000; debugUIEnabled: false;"
+      vr-mode-ui="enabled: false"
+      arjs="sourceType: webcam; gpsMinAccuracy: 100; debugUIEnabled: false;"
     >
-      <!-- กล้องที่เชื่อมกับ GPS และเข็มทิศ -->
+      <!-- กล้องที่ใช้งาน GPS และเซ็นเซอร์ -->
       <a-camera gps-camera rotation-reader></a-camera>
 
-      <!-- วัตถุ 3 มิติ ที่จะปรากฏที่พิกัดจริง -->
+      <!-- วัตถุแสดงตามพิกัด -->
       <a-box 
-        position="0 0 0"
-        color="tomato"
+        color="blue"
         scale="5 5 5"
         gps-entity-place="latitude: 14.800123; longitude: 100.599321"
       >
-        <a-animation attribute="rotation"
-                     dur="3000"
-                     to="0 360 0"
-                     repeat="indefinite"
-                     easing="linear"></a-animation>
+        <a-animation attribute="rotation" dur="4000" to="0 360 0" repeat="indefinite"></a-animation>
       </a-box>
-
     </a-scene>
 
   </body>
