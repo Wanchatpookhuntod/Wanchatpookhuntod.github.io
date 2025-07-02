@@ -1,31 +1,191 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
+    <meta charset="utf-8">
+    <title>High Accuracy GPS AR</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-  </head>
-  <body style="margin: 0; overflow: hidden;">
-    <a-scene
-      vr-mode-ui="enabled: false"
-      embedded
-      arjs="sourceType: webcam; debugUIEnabled: false;"
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #loading { 
+            position: absolute; 
+            top: 0; 
+            width: 100%; 
+            background: rgba(0,0,0,0.7); 
+            color: white; 
+            text-align: center; 
+            padding: 10px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">กำลังโหลด... กรุณาอนุญาตการเข้าถึงตำแหน่งและกล้อง</div>
+
+    <a-scene 
+        vr-mode-ui="enabled: false"
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: false;"
+        renderer="logarithmicDepthBuffer: true;"
     >
-      <!-- กล่องสีแดงที่พิกัด GPS (ลองเปลี่ยนเป็นพิกัดของคุณเอง) -->
-      <a-entity
-        gps-entity-place="latitude: 14.79907; longitude: 100.62211;"  <!-- ตำแหน่ง GPS -->
+        <!-- วัตถุ AR ที่ตำแหน่ง GPS -->
+        <a-entity id="ar-object" gps-entity-place="latitude: 0; longitude: 0;">
+            <a-box id="main-box" 
+                  color="#4CC3D9" 
+                  position="0 0.5 0" 
+                  scale="5 5 5"
+                  animation="property: rotation; to: 0 360 0; loop: true; dur: 10000">
+            </a-box>
+            <a-text value="ตำแหน่งนี้" 
+                   color="black" 
+                   align="center" 
+                   position="0 3 0"
+                   scale="2 2 2">
+            </a-text>
+        </a-entity>
 
-      >
-        <a-box
-          color="blue"
-          position="0 0 0"
-          scale="5 5 5"
-          animation="property: rotation; to: 90 360 0; loop: true; dur: 5000"
-        ></a-box>
-      </a-entity>
-
-
-      <!-- กล้องที่ใช้สำหรับ AR -->
-      <a-camera gps-camera rotation-reader></a-camera>
+        <!-- กล้อง AR พร้อมระบบปรับค่าความคลาดเคลื่อน -->
+        <a-camera id="ar-camera" 
+                 gps-camera 
+                 rotation-reader
+                 position-damping="0.2"
+                 rotation-damping="0.2">
+        </a-camera>
     </a-scene>
-  </body>
+
+    <script>
+        // ตัวแปรเก็บตำแหน่ง
+        let positions = [];
+        const MAX_POSITIONS = 5;
+        let calibrationMode = true;
+        let calibrationCount = 0;
+        const CALIBRATION_THRESHOLD = 3;
+
+        // องค์ประกอบ HTML
+        const loadingElement = document.getElementById('loading');
+        const arObject = document.getElementById('ar-object');
+        const mainBox = document.getElementById('main-box');
+        const arCamera = document.getElementById('ar-camera');
+
+        // ฟังก์ชันแสดงข้อความสถานะ
+        function updateStatus(message) {
+            loadingElement.textContent = message;
+        }
+
+        // ฟังก์ชันคำนวณค่าเฉลี่ยตำแหน่ง
+        function getAveragePosition() {
+            if(positions.length === 0) return null;
+            
+            const sum = positions.reduce((acc, pos) => {
+                return {
+                    latitude: acc.latitude + pos.latitude,
+                    longitude: acc.longitude + pos.longitude,
+                    accuracy: acc.accuracy + pos.accuracy
+                };
+            }, {latitude: 0, longitude: 0, accuracy: 0});
+
+            return {
+                latitude: sum.latitude / positions.length,
+                longitude: sum.longitude / positions.length,
+                accuracy: sum.accuracy / positions.length
+            };
+        }
+
+        // ตั้งค่าตำแหน่งเริ่มต้น (เปลี่ยนเป็นพิกัดของคุณ)
+        const TARGET_LOCATION = {
+            latitude: 14.799070295333415,   // ละติจูดเป้าหมาย
+            longitude: 100.62210599323241,  // ลองจิจูดเป้าหมาย
+            name: "จุดหมายสำคัญ"    // ชื่อตำแหน่ง
+
+        };
+
+        // ระบบติดตามตำแหน่งแบบ High Accuracy
+        if(navigator.geolocation) {
+            updateStatus("กำลังรับตำแหน่ง... (High Accuracy Mode)");
+            
+            const watchId = navigator.geolocation.watchPosition(
+                (position) => {
+                    const newPos = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    };
+
+                    // เก็บตำแหน่งล่าสุด
+                    positions.push(newPos);
+                    if(positions.length > MAX_POSITIONS) {
+                        positions.shift();
+                    }
+
+                    // คำนวณค่าเฉลี่ย
+                    const avgPos = getAveragePosition();
+                    
+                    // แสดงข้อมูลตำแหน่ง
+                    updateStatus(
+                        `ตำแหน่งปัจจุบัน: ${avgPos.latitude.toFixed(6)}, ${avgPos.longitude.toFixed(6)}\n` +
+                        `ความแม่นยำ: ${avgPos.accuracy.toFixed(1)} เมตร\n` +
+                        `ระยะทางถึงเป้าหมาย: ${calculateDistance(avgPos, TARGET_LOCATION).toFixed(1)} เมตร`
+                    );
+
+                    // ถ้าในโหมดปรับเทียบ
+                    if(calibrationMode) {
+                        mainBox.setAttribute('color', 'yellow');
+                        calibrationCount++;
+                        
+                        if(calibrationCount >= CALIBRATION_THRESHOLD) {
+                            calibrationMode = false;
+                            mainBox.setAttribute('color', 'green');
+                            updateStatus("ปรับเทียบเสร็จสิ้น! ตอนนี้ระบบพร้อมใช้งาน");
+                            setTimeout(() => {
+                                loadingElement.style.display = 'none';
+                            }, 2000);
+                        }
+                    }
+
+                    // อัปเดตตำแหน่งวัตถุ AR
+                    arObject.setAttribute('gps-entity-place', {
+                        latitude: TARGET_LOCATION.latitude,
+                        longitude: TARGET_LOCATION.longitude
+                    });
+
+                },
+                (error) => {
+                    console.error("GPS Error:", error);
+                    updateStatus("ข้อผิดพลาด GPS: " + error.message);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            updateStatus("เบราว์เซอร์ไม่รองรับ Geolocation API");
+        }
+
+        // ฟังก์ชันคำนวณระยะทางระหว่างจุดสองจุด (เมตร)
+        function calculateDistance(pos1, pos2) {
+            const R = 6371000; // รัศมีโลกในหน่วยเมตร
+            const φ1 = pos1.latitude * Math.PI/180;
+            const φ2 = pos2.latitude * Math.PI/180;
+            const Δφ = (pos2.latitude - pos1.latitude) * Math.PI/180;
+            const Δλ = (pos2.longitude - pos1.longitude) * Math.PI/180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c;
+        }
+
+        // ระบบตรวจจับการเคลื่อนไหวอุปกรณ์
+        window.addEventListener('deviceorientation', (e) => {
+            // ปรับปรุงการแสดงผลตามการหมุนอุปกรณ์
+            if(e.alpha !== null && e.beta !== null && e.gamma !== null) {
+                // สามารถใช้ค่าการหมุนเพื่อปรับปรุงประสบการณ์ AR
+            }
+        });
+    </script>
+</body>
 </html>
