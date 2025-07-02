@@ -1,34 +1,17 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Location-based AR</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    
-    <!-- เรียกใช้ A-Frame และ AR.js -->
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://unpkg.com/ar.js@3.3.2/aframe/build/aframe-ar-nft.min.js"></script>
-  </head>
-  <body style="margin: 0; overflow: hidden;">
-    <div>hellooo</div>
-
-    <a-scene
-      embedded
-      vr-mode-ui="enabled: false"
-      arjs="sourceType: webcam; gpsMinAccuracy: 100; debugUIEnabled: false;"
-    >
-      <!-- กล้องที่ใช้งาน GPS และเซ็นเซอร์ -->
-      <a-camera gps-camera rotation-reader></a-camera>
-
-      <!-- วัตถุแสดงตามพิกัด -->
-      <a-box 
-        color="blue"
-        scale="5 5 5"
-        gps-entity-place="latitude: 14.800123; longitude: 100.599321"
-      >
-        <a-animation attribute="rotation" dur="4000" to="0 360 0" repeat="indefinite"></a-animation>
-      </a-box>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <body style="margin : 0px; overflow: hidden;">
+    <a-scene embedded arjs>
+      <a-marker preset="hiro">
+        <a-entity
+          position="0 0 0"
+          scale="0.05 0.05 0.05"
+          gltf-model="your-server/scene.gltf"
+        ></a-entity>
+      </a-marker>
+      <a-entity camera></a-entity>
     </a-scene>
-
   </body>
 </html>
