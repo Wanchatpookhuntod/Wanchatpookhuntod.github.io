@@ -5,12 +5,36 @@
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs="trackingMethod: best;">
-      <!-- Use a Hiro marker (https://jeromeetienne.github.io/AR.js/data/images/HIRO.jpg) -->
-      <a-marker preset="hiro">
-        <a-box position="0 0.5 0" material="color: red"></a-box>
-      </a-marker>
-      <a-entity camera></a-entity>
+    <a-scene
+      vr-mode-ui="enabled: false"
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false;"
+    >
+      <!-- กล่องสีแดงที่พิกัด GPS (ลองเปลี่ยนเป็นพิกัดของคุณเอง) -->
+      <a-entity
+        gps-entity-place="latitude: 13.736717; longitude: 100.523186;"  <!-- ตำแหน่ง GPS -->
+      >
+        <a-box
+          color="red"
+          position="0 0.5 0"
+          scale="5 5 5"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 5000"
+        ></a-box>
+      </a-entity>
+
+      <!-- กล่องสีน้ำเงินที่อีกตำแหน่ง -->
+      <a-entity
+        gps-entity-place="latitude: 14.798737963037825; longitude: 100.62233161652954;"  <!-- เปลี่ยนพิกัดนี้ -->
+      >
+        <a-box
+          color="blue"
+          position="0 2 0"
+          scale="3 3 3"
+        ></a-box>
+      </a-entity>
+
+      <!-- กล้องที่ใช้สำหรับ AR -->
+      <a-camera gps-camera rotation-reader></a-camera>
     </a-scene>
   </body>
 </html>
