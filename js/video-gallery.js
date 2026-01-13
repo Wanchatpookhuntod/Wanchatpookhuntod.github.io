@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createVideoCard(video, originalIndex) {
         const videoCard = document.createElement('a');
-        videoCard.href = 'player.html?videoIndex=' + originalIndex;
+        videoCard.href = 'player.html?id=' + video.id;
         videoCard.className = 'video-item';
         videoCard.dataset.category = video.category.toLowerCase();
 

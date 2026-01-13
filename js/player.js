@@ -1,29 +1,26 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const videoIndex = parseInt(urlParams.get('videoIndex'), 10);
+    const videoId = urlParams.get('id');
 
     const playerFrame = document.getElementById('player-frame');
     const videoTitle = document.getElementById('video-title');
     const videoDescription = document.getElementById('video-description');
 
     try {
-        // โหลดวิดีโอจากไฟล์ JSON ผ่าน API (เพื่อรองรับข้อมูลล่าสุดจาก R2)
-        const response = await fetch('api/get-videos');
+        // ใช้ R2 URL โดยตรง เพื่อความสดใหม่และรวดเร็ว
+        const JSON_URL = 'https://pub-d6490d66d15543b1bdc77b15d2f43a64.r2.dev/data/videos.json?v=' + Date.now();
+        const response = await fetch(JSON_URL);
         if (!response.ok) {
-            throw new Error('Failed to load videos');
+            throw new Error('Failed to load videos from R2');
         }
-        
-        const videos = await response.json();
-        
-        // เรียงลำดับวิดีโอจากล่าสุดไปเก่าสุด (เหมือนหน้าหลัก)
-        videos.sort(function(a, b) {
-            return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-        console.log('✅ Videos sorted by date (newest first) for player');
 
-        if (videoIndex >= 0 && videoIndex < videos.length) {
-            const video = videos[videoIndex];
-            
+        const videos = await response.json();
+
+        // ค้นหาวิดีโอโดยใช้ ID
+        const video = videos.find(v => String(v.id) === String(videoId));
+
+        if (video) {
+
             // Update page title
             document.title = `${video.title} - Multimedia TRU`;
 
@@ -44,21 +41,34 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 // กรณีเป็น Direct Link (Cloudflare R2, อื่นๆ) ใช้ <video> tag
                 const videoEl = document.createElement('video');
-                videoEl.src = video.url;
                 videoEl.controls = true;
                 videoEl.autoplay = true;
+                videoEl.playsInline = true;
                 videoEl.id = 'main-video-player';
                 videoEl.style.width = "100%";
                 videoEl.style.height = "100%";
-                videoEl.style.backgroundColor = "#000"; // พื้นหลังสีดำ
-                
+                videoEl.style.backgroundColor = "#000";
+
+                // เพิ่ม source สำหรับรองรับ MP4
+                const source = document.createElement('source');
+                source.src = video.url;
+                source.type = 'video/mp4';
+                videoEl.appendChild(source);
+
                 // ป้องกันการ download (ถ้าต้องการ)
                 videoEl.controlsList = "nodownload";
-                
+
                 // Error handling
-                videoEl.onerror = function() {
-                    console.error('Video load error');
-                    playerFrame.innerHTML = '<div style="color:white;text-align:center;padding:20px;">ไม่สามารถเล่นวิดีโอนี้ได้ (Format not supported or Link broken)</div>';
+                videoEl.onerror = function (e) {
+                    console.error('Video load error:', e);
+                    playerFrame.innerHTML = `
+                        <div style="color:white;text-align:center;padding:20px;">
+                            <span class="material-symbols-outlined" style="font-size: 48px; color: #ff0404;">error</span>
+                            <br><br>
+                            ไม่สามารถเล่นวิดีโอนี้ได้<br>
+                            <small style="color:#aaa;">(Format not supported or Link broken)</small><br>
+                            <a href="${video.url}" target="_blank" style="color:#3498db; text-decoration: underline; margin-top:10px; display:inline-block;">ลองเปิดลิงก์โดยตรง</a>
+                        </div>`;
                 };
 
                 playerFrame.appendChild(videoEl);
@@ -67,7 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Set video details
             videoTitle.textContent = video.title;
             videoDescription.textContent = video.description;
-            
+
             // แสดงชื่อนักศึกษาถ้ามี
             if (video.studentName) {
                 const studentInfo = document.createElement('p');
