@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server/api-server.js",
     "dev": "nodemon server/api-server.js",
-    "build": "echo 'No build step required'"
+    "build": "./scripts/build-web.sh"
   },
   "keywords": [
     "multimedia",
