@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player - Multimedia TRU</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Athiti:wght@400;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+    <div class="top-fixed-image"> 
+        <img src="images/mobile_tab_background.png" alt="Top Image">
+        <div class="menu_bar">
+            <div><a href="index.html"><img src="images/logo_multimedia.png" alt="Logo"></a></div>
+            <div><a href="index.html#about">เกี่ยวกับ</a></div>
+            <div><a href="index.html#course">หลักสูตร</a></div>
+            <div><a href="index.html#workings">ผลงาน</a></div>
+            <div><a href="index.html#contract">ติดต่อเรา</a></div>
+            <div>MULTIMEDIA TECHNOLOGY</div>
+        </div>
+    </div>
+
+    <div class="tab_mobile">
+        <div class="icon">
+            <a href="#top"><img src="images/logo_multimedia.png" alt=""></a>
+        </div>
+        <div class="tab">
+            <img src="images/mobile_tab_background.png">
+        </div>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <div class="hamburger" onclick="toggleMobileMenu()" style="
+    right: 3%; top: 8%">
+        <span class="material-symbols-outlined">menu</span>
+    </div>
+
+    <div class="menu_mobile">
+        <div class="mobile_nav_items">
+            <div class="nav_item"><a href="index.html">หน้าแรก</a></div>
+            <div class="nav_item"><a href="index.html#about">เกี่ยวกับ</a></div>
+            <div class="nav_item"><a href="index.html#course">หลักสูตร</a></div>
+            <div class="nav_item"><a href="index.html#workings">ผลงาน</a></div>
+            <div class="nav_item"><a href="index.html#contract">ติดต่อเรา</a></div>
+        </div>
+    </div>
+
+    
+    <div class="video-player-wrapper">
+        <div class="video-player-container" id="video-player-content">
+            <!-- Video player and details will be injected here by player.js -->
+            <div id="player-frame" class="player-frame"></div>
+            <div class="video-details">
+                <h1 id="video-title" class="video-title"></h1>
+                <p id="video-description" class="video-description"></p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="website-footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>&copy; 2025 สาขาวิชาเทคโนโลยีมัลติมีเดีย มหาวิทยาลัยราชภัฏเทพสตรี | All rights reserved</p>
+                </div>
+                <div class="footer-social">
+                    <a href="https://www.facebook.com/multimedia.tru" target="_blank" class="social-link">
+                        <span>📘 Facebook</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/player.js"></script>
+    <script>
+        function toggleMobileMenu() {
+            const mobileMenu = document.querySelector('.menu_mobile');
+            const hamburger = document.querySelector('.hamburger');
+            
+            mobileMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        }
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.menu_mobile a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.menu_mobile').classList.remove('active');
+                document.querySelector('.hamburger').classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

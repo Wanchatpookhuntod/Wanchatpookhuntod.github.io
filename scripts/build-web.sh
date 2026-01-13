@@ -15,19 +15,21 @@ mkdir -p $PROD_DIR
 # คัดลอกไฟล์ที่จำเป็นสำหรับเว็บไซต์
 echo "📋 คัดลอกไฟล์ที่จำเป็น..."
 
-# HTML files (รวม video-generator)
+# HTML files
 cp index.html $PROD_DIR/
 cp player.html $PROD_DIR/
 cp video-generator.html $PROD_DIR/
 
 # CSS files
-cp css/styles.css $PROD_DIR/
-cp css/video-generator.css $PROD_DIR/
+mkdir -p $PROD_DIR/css
+cp css/styles.css $PROD_DIR/css/
+cp css/video-generator.css $PROD_DIR/css/
 
 # JS files
-cp js/video-gallery.js $PROD_DIR/
-cp js/player.js $PROD_DIR/
-cp js/video-generator.js $PROD_DIR/
+mkdir -p $PROD_DIR/js
+cp js/video-gallery.js $PROD_DIR/js/
+cp js/player.js $PROD_DIR/js/
+cp js/video-generator.js $PROD_DIR/js/
 
 # Data files
 cp -r data $PROD_DIR/
@@ -35,16 +37,11 @@ cp -r data $PROD_DIR/
 # Images
 cp -r images $PROD_DIR/
 
-# สร้างโฟลเดอร์สำหรับ CSS และ JS
-mkdir -p $PROD_DIR/css
-mkdir -p $PROD_DIR/js
-
-# ย้ายไฟล์ไปยังโฟลเดอร์ที่ถูกต้อง
-mv $PROD_DIR/styles.css $PROD_DIR/css/
-mv $PROD_DIR/video-generator.css $PROD_DIR/css/
-mv $PROD_DIR/video-gallery.js $PROD_DIR/js/
-mv $PROD_DIR/player.js $PROD_DIR/js/
-mv $PROD_DIR/video-generator.js $PROD_DIR/js/
+# Cloudflare Functions
+if [ -d "functions" ]; then
+    echo "⚙️  คัดลอก Cloudflare Functions..."
+    cp -r functions $PROD_DIR/
+fi
 
 # สร้างไฟล์ README สำหรับ production
 cat > $PROD_DIR/README.md << 'EOF'
@@ -65,6 +62,7 @@ cat > $PROD_DIR/README.md << 'EOF'
 - `js/` - JavaScript สำหรับการทำงาน
 - `data/videos.json` - ข้อมูลวิดีโอ
 - `images/` - รูปภาพและไฟล์สื่อ
+- `functions/` - Cloudflare Pages Functions
 
 ---
 *ไฟล์นี้สร้างโดย build script อัตโนมัติ*
@@ -86,13 +84,12 @@ echo "├── 💻 js/player.js"
 echo "├── 💻 js/video-generator.js"
 echo "├── 💾 data/videos.json"
 echo "├── 🖼️  images/ (ทั้งหมด)"
+if [ -d "functions" ]; then
+echo "├── ⚙️  functions/ (Cloudflare Functions)"
+fi
 echo "└── 📖 README.md"
 echo ""
-echo "❌ ไม่รวมไฟล์:"
-echo "├── 🚀 api-server.js"
-echo "└── 📜 scripts/"
-echo ""
 echo "═══════════════════════════════════════════════════════════"
-echo "🎉 พร้อม Deploy ไป GitHub Pages!"
-echo "💡 อัพโหลดโฟลเดอร์ $PROD_DIR ไปยัง GitHub Pages"
+echo "🎉 พร้อม Deploy ไป Cloudflare Pages!"
+echo "💡 อัพโหลดโฟลเดอร์ $PROD_DIR ไปยัง Cloudflare Pages"
 echo "═══════════════════════════════════════════════════════════"
