@@ -1,6 +1,14 @@
 export async function onRequestPost(context) {
   try {
     const { request, env } = context;
+
+    // Check if BUCKET binding exists
+    if (!env.BUCKET) {
+      return new Response(JSON.stringify({
+        error: 'R2 Bucket binding (BUCKET) is missing. Please check your Cloudflare Pages settings.'
+      }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    }
+
     const videos = await request.json();
 
     if (!Array.isArray(videos)) {
@@ -15,7 +23,7 @@ export async function onRequestPost(context) {
 
     // Save to R2
     await env.BUCKET.put('data/videos.json', JSON.stringify(cleanVideos, null, 2), {
-        httpMetadata: { contentType: 'application/json' }
+      httpMetadata: { contentType: 'application/json' }
     });
 
     return new Response(JSON.stringify({
