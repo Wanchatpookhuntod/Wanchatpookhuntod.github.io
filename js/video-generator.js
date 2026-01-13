@@ -564,7 +564,7 @@ function showNotification(message, type = 'info') {
 }
 
 // ================================================================
-// PYTHON API INTEGRATION
+// CLOUDFLARE FUNCTIONS API INTEGRATION
 // ================================================================
 
 const API_BASE_URL = 'api';

@@ -2,11 +2,9 @@
   "name": "multimedia-tru-website",
   "version": "1.0.0",
   "description": "Multimedia TRU Website with Video Gallery Management",
-  "main": "server/api-server.js",
   "scripts": {
-    "start": "node server/api-server.js",
-    "dev": "nodemon server/api-server.js",
-    "build": "./scripts/build-web.sh"
+    "dev": "wrangler pages dev .",
+    "deploy": "wrangler pages deploy ."
   },
   "keywords": [
     "multimedia",
@@ -14,12 +12,5 @@
     "gallery"
   ],
   "author": "Multimedia TRU",
-  "license": "ISC",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.2"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
-  }
+  "license": "ISC"
 }
