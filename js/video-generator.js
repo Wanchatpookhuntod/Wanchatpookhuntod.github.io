@@ -5,6 +5,7 @@
 let videos = [];
 let currentThumbnailData = null; // เก็บข้อมูลรูปภาพที่อัพโหลด
 let editingVideoId = null; // เก็บ ID ของวิดีโอที่กำลังแก้ไข
+const R2_BASE_URL = 'https://pub-d6490d66d15543b1bdc77b15d2f43a64.r2.dev/';
 
 // Expose functions to global scope for onclick handlers
 window.editVideo = editVideo;
@@ -28,8 +29,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 async function autoLoadVideosJSON() {
     console.log('📂 Auto-loading videos from API...');
     try {
-        // Change from directly fetch 'data/videos.json' to use the API function (which checks R2)
-        const response = await fetch('api/get-videos');
+        // เปลี่ยนมาดึงตรงจาก Public R2 URL ที่คุณให้ไว้
+        const response = await fetch(`${R2_BASE_URL}data/videos.json?v=${Date.now()}`);
         console.log('🌐 Fetch response status:', response.status);
 
         if (response.ok) {
@@ -354,9 +355,8 @@ function renderVideoList() {
         // แสดง thumbnail ถ้ามี - ใช้ path สัมพัทธ์จาก root
         let thumbnailHtml;
         if (video.thumbnail && video.thumbnail.trim() !== '') {
-            const thumbnailPath = video.thumbnail.startsWith('/') ? video.thumbnail : '/' + video.thumbnail;
-            console.log(`  📸 Thumbnail path: ${thumbnailPath}`);
-            thumbnailHtml = `<img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail" 
+            // ใช้ R2_BASE_URL สำหรับรูปภาพ
+            thumbnailHtml = `<img src="${R2_BASE_URL}${video.thumbnail}" alt="${video.title}" class="video-thumbnail" 
                 onerror="console.error('❌ Failed to load:', this.src); this.parentElement.innerHTML='<div class=\\'no-thumbnail\\'>🎬</div>';">`;
         } else {
             console.log(`  ⚠️ No thumbnail for: ${video.title}`);
