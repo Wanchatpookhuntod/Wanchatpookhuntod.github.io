@@ -695,7 +695,7 @@ async function updateVideosJSON() {
     } catch (error) {
         // แสดงข้อความ error พร้อมคำแนะนำ
         showNotification(
-            `❌ ไม่สามารถอัพเดตข้อมูลได้!\n\n⚠️ กรุณาตรวจสอบ:\n1. API Server กำลังทำงานหรือไม่\n2. เปิด Terminal และรัน: node server/api-server.js\n3. ตรวจสอบ Console (F12) เพื่อดูรายละเอียด`, 
+            `❌ ไม่สามารถอัพเดตข้อมูลได้!\n\n⚠️ กรุณาตรวจสอบ:\n1. คุณกำลังใช้งานผ่าน 'npx wrangler pages dev' หรือ Deploy บน Cloudflare แล้วใช่หรือไม่?\n2. มีการเชื่อมต่อ R2 Bucket (ชื่อ BUCKET) ในหน้า Settings ของ Cloudflare Pages แล้วหรือยัง?\n3. ตรวจสอบ Console (F12) เพื่อดูรายละเอียดข้อผิดพลาด`, 
             'error'
         );
         
