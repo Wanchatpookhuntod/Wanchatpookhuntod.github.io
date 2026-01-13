@@ -15,16 +15,19 @@ mkdir -p $PROD_DIR
 # คัดลอกไฟล์ที่จำเป็นสำหรับเว็บไซต์
 echo "📋 คัดลอกไฟล์ที่จำเป็น..."
 
-# HTML files (ยกเว้น video-generator)
+# HTML files (รวม video-generator)
 cp index.html $PROD_DIR/
 cp player.html $PROD_DIR/
+cp video-generator.html $PROD_DIR/
 
-# CSS files (ยกเว้น video-generator.css)
+# CSS files
 cp css/styles.css $PROD_DIR/
+cp css/video-generator.css $PROD_DIR/
 
-# JS files (ยกเว้น video-generator.js)
+# JS files
 cp js/video-gallery.js $PROD_DIR/
 cp js/player.js $PROD_DIR/
+cp js/video-generator.js $PROD_DIR/
 
 # Data files
 cp -r data $PROD_DIR/
@@ -38,8 +41,10 @@ mkdir -p $PROD_DIR/js
 
 # ย้ายไฟล์ไปยังโฟลเดอร์ที่ถูกต้อง
 mv $PROD_DIR/styles.css $PROD_DIR/css/
+mv $PROD_DIR/video-generator.css $PROD_DIR/css/
 mv $PROD_DIR/video-gallery.js $PROD_DIR/js/
 mv $PROD_DIR/player.js $PROD_DIR/js/
+mv $PROD_DIR/video-generator.js $PROD_DIR/js/
 
 # สร้างไฟล์ README สำหรับ production
 cat > $PROD_DIR/README.md << 'EOF'
@@ -73,17 +78,17 @@ echo ""
 echo "📋 ไฟล์ที่รวม:"
 echo "├── 🌐 index.html"
 echo "├── 🎬 player.html"
+echo "├── 🔧 video-generator.html"
 echo "├── 🎨 css/styles.css"
+echo "├── 🎨 css/video-generator.css"
 echo "├── 💻 js/video-gallery.js"
 echo "├── 💻 js/player.js"
+echo "├── 💻 js/video-generator.js"
 echo "├── 💾 data/videos.json"
 echo "├── 🖼️  images/ (ทั้งหมด)"
 echo "└── 📖 README.md"
 echo ""
 echo "❌ ไม่รวมไฟล์:"
-echo "├── 🔧 video-generator.html"
-echo "├── 🔧 video-generator.css"
-echo "├── 🔧 video-generator.js"
 echo "├── 🚀 api-server.js"
 echo "└── 📜 scripts/"
 echo ""
