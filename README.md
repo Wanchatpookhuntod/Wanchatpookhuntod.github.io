@@ -55,29 +55,14 @@
 MultimediaTRU.github.io/
 ├── 📄 index.html                 # หน้าแรกของเว็บไซต์
 ├── 📄 player.html                # หน้าเล่นวิดีโอ
-├── 📄 video-generator.html       # เครื่องมือจัดการวิดีโอ (Dev only)
+├── 📄 video-generator.html       # เครื่องมือจัดการวิดีโอ
 ├── 📁 css/                       # ไฟล์สไตล์ชีต
-│   ├── styles.css               # สไตล์หลักของเว็บไซต์
-│   └── video-generator.css      # สไตล์สำหรับ video-generator
 ├── 📁 js/                        # ไฟล์ JavaScript
-│   ├── video-gallery.js         # จัดการแกลเลอรี่วิดีโอ
-│   ├── player.js                # ควบคุมการเล่นวิดีโอ
-│   └── video-generator.js       # เครื่องมือจัดการวิดีโอ
 ├── 📁 images/                    # รูปภาพและไฟล์สื่อ
-│   ├── cover/                   # รูปภาพปกวิดีโอที่อัพโหลด
-│   └── *.jpg, *.png            # รูปภาพทั่วไป
-├── 📁 data/                      # ฐานข้อมูล
-│   └── videos.json              # ข้อมูลวิดีโอทั้งหมด
-├── 📁 server/                    # Backend API
-│   └── api-server.js            # Node.js Express API Server
-├── 📁 scripts/                   # สคริปต์จัดการ
-│   ├── start-servers.sh         # เริ่มเซิร์ฟเวอร์ทั้งสอง
-│   ├── stop-servers.sh          # ปิดเซิร์ฟเวอร์
-│   └── build-web.sh             # Build สำหรับ production
-├── 📁 dist/                      # Build output (ignored by git)
-├── 📄 package.json               # Dependencies และ scripts
-├── 📄 README.md                  # เอกสารหลัก (ไฟล์นี้)
-└── 📄 START.md                   # คู่มือเริ่มต้นแบบย่อ
+├── 📁 data/                      # ฐานข้อมูล JSON
+├── 📁 functions/                 # Cloudflare Pages Functions (API)
+├── 📄 package.json               # Configuration สำหรับ Cloudflare
+└── 📄 README.md                  # เอกสารหลัก (ไฟล์นี้)
 ```
 
 ### หน้าที่ของแต่ละส่วน
@@ -96,38 +81,21 @@ MultimediaTRU.github.io/
 
 ## 🚀 เริ่มต้นใช้งาน
 
-### วิธีที่ 1: ใช้ Script อัตโนมัติ (แนะนำ) ⭐
+### วิธีที่ 1: ใช้ Wrangler (แนะนำ) ⭐
 
 ```bash
-# เริ่มเซิร์ฟเวอร์ทั้งสอง
-./scripts/start-servers.sh
+# เริ่มเซิร์ฟเวอร์จำลองสภาพแวดล้อม Cloudflare
+npm run dev
 
 # เปิดในเบราว์เซอร์
-# http://localhost:8080
+# http://localhost:8788
 ```
 
-### วิธีที่ 2: เริ่มแบบ Manual
+### วิธีที่ 2: เริ่มแบบ Manual (เฉพาะ Static)
 
-#### Terminal 1 - Web Server:
 ```bash
+# ใช้ Live Server หรือ python
 python3 -m http.server 8080
-```
-
-#### Terminal 2 - API Server (สำหรับจัดการวิดีโอ):
-```bash
-node server/api-server.js
-```
-
-### เปิดหน้าเว็บ
-
-- **หน้าหลัก**: http://localhost:8080/
-- **จัดการวิดีโอ**: http://localhost:8080/video-generator.html
-- **เล่นวิดีโอ**: http://localhost:8080/player.html
-
-### หยุดเซิร์ฟเวอร์
-
-```bash
-./scripts/stop-servers.sh
 ```
 
 ---
@@ -166,17 +134,9 @@ node server/api-server.js
 
 ## 🌐 การ Deploy
 
-### สร้างไฟล์สำหรับ Production
+โปรเจกต์นี้ตั้งค่าให้ Deploy จาก **Root Directory** โดยตรงไปยัง Cloudflare Pages
 
-```bash
-./scripts/build-web.sh
-```
-
-สคริปต์จะสร้างโฟลเดอร์ `dist/` ที่มี:
-- ✅ HTML, CSS, JS, Images, Data files
-- ❌ ไม่รวม video-generator, server files, scripts
-
-### Deploy ไป GitHub Pages
+### การอัปเดตเว็บไซต์
 
 ```bash
 # เพิ่มไฟล์ใหม่
@@ -189,14 +149,14 @@ git commit -m "Update content"
 git push origin main
 ```
 
-รอ 1-2 นาที แล้วเปิด: https://tru-multimedia-web.github.io/MultimediaTRU.github.io/
+Cloudflare Pages จะตรวจพบการเปลี่ยนแปลงและอัปเดตเว็บไซต์ให้โดยอัตโนมัติ
 
-### การตั้งค่า GitHub Pages
+### การตั้งค่า Cloudflare Pages
 
-1. เข้า **Settings** → **Pages**
-2. เลือก **Source**: `Deploy from a branch`
-3. เลือก **Branch**: `main` และโฟลเดอร์ `/root`
-4. คลิก **Save**
+1. เข้า **Settings** → **Build & deployments**
+2. **Build command**: (เว้นว่างไว้)
+3. **Build output directory**: `/`
+4. **Root directory**: `/`
 
 ---
 
@@ -264,27 +224,17 @@ A: เป็นเครื่องมือสำหรับ development เ�
 
 ---
 
-## 🚀 วิธีใช้งาน
-
 ### สำหรับพัฒนา (Development)
 
 ```bash
-# เริ่มเซิร์ฟเวอร์
-./scripts/start-servers.sh
-
-# เปิดหน้าเว็บ
-# http://localhost:8080 (Web)
-# http://localhost:5001 (API)
+# เริ่มเซิร์ฟเวอร์จำลอง Cloudflare
+npm run dev
 ```
 
 ### สำหรับ Deploy (Production)
 
-```bash
-# สร้างไฟล์สำหรับ Deploy
-./scripts/build-web.sh
-
-# อัพโหลดโฟลเดอร์ dist/ ไปยัง GitHub Pages
-```
+Deploy อัตโนมัติผ่าน Cloudflare Pages เมื่อ Push Code ขึ้น GitHub
+    
 
 ## 🌐 GitHub Pages Structure
 

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Multimedia TRU Website with Video Gallery Management",
   "scripts": {
-    "build": "./scripts/build-web.sh",
+    "build": "echo 'No build needed for root deployment'",
     "dev": "wrangler pages dev .",
-    "deploy": "wrangler pages deploy dist"
+    "deploy": "wrangler pages deploy ."
   },
   "keywords": [
     "multimedia",
